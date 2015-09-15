@@ -3,21 +3,11 @@ package com.example.preston.movecard;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 
 /**
@@ -29,16 +19,13 @@ public class CardView extends View {
 
     private float left;
     private float top;
+    private float tempLeft;
+    private float tempTop;
+
     private float width;
     private float height;
-    private boolean touched = false;
     private boolean pressed = false;
     private boolean dragging = false;
-
-
-    private TextPaint mTextPaint;
-    private float mTextWidth;
-    private float mTextHeight;
 
     public CardView(Context context) {
         super(context);
@@ -88,52 +75,22 @@ public class CardView extends View {
 
         a.recycle();
 
-        // Set up a default TextPaint object
-        mTextPaint = new TextPaint();
-        mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextAlign(Paint.Align.LEFT);
-
-        // Update TextPaint and text measurements from attributes
-        invalidateTextPaintAndMeasurements();
-    }
-
-    private void invalidateTextPaintAndMeasurements() {
-
-        Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-        mTextHeight = fontMetrics.bottom;
+        invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // TODO: consider storing these as member variables to reduce
-        // allocations per draw cycle.
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-
-        float density = dm.density;
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
-
         int contentWidth = (int) width;
         int contentHeight = (int) height;
 
         int leftPos = (int) (left );
         int topPos = (int) (top);
-        // we use something like Drawable ... = ...;
-        // Draw the text.
-        //canvas.drawPicture();
 
         // Draw the example drawable on top of the text.
         if ((mExampleDrawable = getImage(card))!= null) {
-
-//            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) this.getLayoutParams();
-//            params.topMargin = (int)(top);
-//            params.leftMargin = (int)(left);
             mExampleDrawable.setBounds(leftPos, topPos, leftPos + contentWidth, topPos + contentHeight);
-//            setLayoutParams(params);
             mExampleDrawable.draw(canvas);
         }
     }
@@ -148,15 +105,20 @@ public class CardView extends View {
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN: {
                     pressed = true;
+                    tempLeft = event.getX();
+                    tempTop = event.getY();
 
                     return true;
                 }
                 case MotionEvent.ACTION_MOVE: {
                     dragging = true;
                     pressed = false;
-                    left = event.getX();
-                    top = event.getY();
-                    touched = true;
+                    float dx = event.getX() - tempLeft;
+                    float dy = event.getY() - tempTop;
+                    left += dx;
+                    top += dy;
+                    tempTop = event.getY();
+                    tempLeft = event.getX();
                     invalidate();
                     break;
 
@@ -193,12 +155,13 @@ public class CardView extends View {
     }
 
     //necessary for parsing card file name from value
-    //TODO: add support for face cards
     private String getValueFromInt(int value) {
-        boolean debug = true;
-        if (debug)
-            System.out.println("get value from int will return: " + value);
-        return "" + value;
+        if (value < 11 && value != 1)
+            return "" + (value );
+        String[] values = {"dummy", "jack", "queen", "king", "ace"};
+        if (value == 1)
+                return values[0];
+        return values[value - 10];
     }
 
 
