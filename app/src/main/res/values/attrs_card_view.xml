@@ -5,5 +5,7 @@
         <attr name="leftDimension" format="dimension" />
         <attr name="cardSuit" format="string" />
         <attr name="cardValue" format="integer" />
+        <attr name="width" format="dimension" />
+        <attr name="cardheight" format="dimension" />
     </declare-styleable>
 </resources>

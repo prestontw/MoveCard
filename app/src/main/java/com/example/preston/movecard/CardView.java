@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -12,6 +13,9 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
@@ -24,6 +28,8 @@ public class CardView extends View {
 
     private float left;
     private float top;
+    private float width;
+    private float height;
     private boolean touched = false;
 
     private TextPaint mTextPaint;
@@ -73,6 +79,12 @@ public class CardView extends View {
         if (a.hasValue(R.styleable.CardView_topDimension)) {
             top = a.getDimension(R.styleable.CardView_topDimension, 0.0f);
         }
+        if (a.hasValue(R.styleable.CardView_width)) {
+            width = a.getDimension(R.styleable.CardView_width, 132);
+        }
+        if (a.hasValue(R.styleable.CardView_cardheight)) {
+            height = a.getDimension(R.styleable.CardView_cardheight, 200);
+        }
 
         a.recycle();
 
@@ -100,22 +112,16 @@ public class CardView extends View {
         DisplayMetrics dm = getResources().getDisplayMetrics();
 
         float density = dm.density;
-        Toast.makeText(getContext(), "density: " + density, Toast.LENGTH_SHORT).show();
         int paddingLeft = getPaddingLeft();
         int paddingTop = getPaddingTop();
         int paddingRight = getPaddingRight();
         int paddingBottom = getPaddingBottom();
 
-        int contentWidth = getWidth() - paddingLeft - paddingRight;
-        int contentHeight = getHeight() - paddingTop - paddingBottom;
+        int contentWidth = (int) width;
+        int contentHeight = (int) height;
 
-        int leftPos = (int) (paddingLeft );
-        Toast.makeText(getContext(), "x= " + leftPos, Toast.LENGTH_SHORT).show();
-        int topPos = (int) (paddingTop);
-        if (touched) {
-            leftPos = (int) left;
-            topPos = (int) top;
-        }
+        int leftPos = (int) (left );
+        int topPos = (int) (top);
         // we use something like Drawable ... = ...;
         // Draw the text.
         //canvas.drawPicture();
@@ -123,8 +129,11 @@ public class CardView extends View {
         // Draw the example drawable on top of the text.
         if ((mExampleDrawable = getImage(card))!= null) {
 
-            mExampleDrawable.setBounds(leftPos, topPos,
-                    leftPos + contentWidth, topPos + contentHeight);
+//            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) this.getLayoutParams();
+//            params.topMargin = (int)(top);
+//            params.leftMargin = (int)(left);
+            mExampleDrawable.setBounds(leftPos, topPos, leftPos + contentWidth, topPos + contentHeight);
+//            setLayoutParams(params);
             mExampleDrawable.draw(canvas);
         }
     }
