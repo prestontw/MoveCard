@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -14,12 +15,9 @@ import android.widget.Toast;
 
 
 /**
- * TODO: document your custom view class.
+ * View to display a card!
  */
 public class CardView extends View {
-    private String mExampleString; // TODO: use a default from R.string...
-    private int mExampleColor = Color.RED; // TODO: use a default from R.color...
-    private float mExampleDimension = 0; // TODO: use a default from R.dimen...
     private Drawable mExampleDrawable;
     private Card card;
 
@@ -48,27 +46,16 @@ public class CardView extends View {
 
     private void init(AttributeSet attrs, int defStyle) {
         // Load attributes
-//        final TypedArray a = getContext().obtainStyledAttributes(
-//                attrs, R.styleable.CardView, defStyle, 0);
-//
-//        mExampleString = a.getString(
-//                R.styleable.CardView_exampleString);
-//        mExampleColor = a.getColor(
-//                R.styleable.CardView_exampleColor,
-//                mExampleColor);
-//        // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
-//        // values that should fall on pixel boundaries.
-//        mExampleDimension = a.getDimension(
-//                R.styleable.CardView_exampleDimension,
-//                mExampleDimension);
-//
-//        if (a.hasValue(R.styleable.CardView_exampleDrawable)) {
-//            mExampleDrawable = a.getDrawable(
-//                    R.styleable.CardView_exampleDrawable);
-//            mExampleDrawable.setCallback(this);
-//        }
+        final TypedArray a = getContext().obtainStyledAttributes(
+                attrs, R.styleable.CardView, defStyle, 0);
 
-//        a.recycle();
+        if (a.hasValue(R.styleable.CardView_exampleDrawable)) {
+            mExampleDrawable = a.getDrawable(
+                    R.styleable.CardView_exampleDrawable);
+            mExampleDrawable.setCallback(this);
+        }
+
+        a.recycle();
 
         // Set up a default TextPaint object
         mTextPaint = new TextPaint();
@@ -80,9 +67,6 @@ public class CardView extends View {
     }
 
     private void invalidateTextPaintAndMeasurements() {
-        mTextPaint.setTextSize(mExampleDimension);
-        mTextPaint.setColor(mExampleColor);
-//        mTextWidth = mTextPaint.measureText(mExampleString);
 
         Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
         mTextHeight = fontMetrics.bottom;
@@ -115,92 +99,30 @@ public class CardView extends View {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
         Toast.makeText(getContext(), "Thing was touched", Toast.LENGTH_SHORT);
         return super.onTouchEvent(event);
     }
 
     //turns a card into the appropriate image
     private Drawable getImage(Card card) {
-        String suit = card.getSuit();
-        int value = card.getValue();
+        Card.suits suit = card.getSuit();
+        Card.values value = card.getValue();
         String fileName = suit + "_" + getValueFromInt(value);
 
         //get id of image to draw
         int resID = getResources().getIdentifier(fileName, "drawable", getContext().getPackageName());
-        Drawable ret = getResources().getDrawable(resID);
-        return ret;
+        return getResources().getDrawable(resID);
     }
 
     //necessary for parsing card file name from value
-    private String getValueFromInt(int value) {
-        if (value < 11 && value != 1)
-            return "" + (value );
-        String[] values = {"dummy", "jack", "queen", "king", "ace"};
-        if (value == 1)
-            return values[0];
-        return values[value - 10];
+    private String getValueFromInt(Card.values value) {
+        boolean debug = true;
+        if (debug)
+            System.out.println("get value from int will return: " + value);
+        return "" + value;
     }
 
-    /**
-     * Gets the example string attribute value.
-     *
-     * @return The example string attribute value.
-     */
-    public String getExampleString() {
-        return mExampleString;
-    }
-
-    /**
-     * Sets the view's example string attribute value. In the example view, this string
-     * is the text to draw.
-     *
-     * @param exampleString The example string attribute value to use.
-     */
-    public void setExampleString(String exampleString) {
-        mExampleString = exampleString;
-        invalidateTextPaintAndMeasurements();
-    }
-
-    /**
-     * Gets the example color attribute value.
-     *
-     * @return The example color attribute value.
-     */
-    public int getExampleColor() {
-        return mExampleColor;
-    }
-
-    /**
-     * Sets the view's example color attribute value. In the example view, this color
-     * is the font color.
-     *
-     * @param exampleColor The example color attribute value to use.
-     */
-    public void setExampleColor(int exampleColor) {
-        mExampleColor = exampleColor;
-        invalidateTextPaintAndMeasurements();
-    }
-
-    /**
-     * Gets the example dimension attribute value.
-     *
-     * @return The example dimension attribute value.
-     */
-    public float getExampleDimension() {
-        return mExampleDimension;
-    }
-
-    /**
-     * Sets the view's example dimension attribute value. In the example view, this dimension
-     * is the font size.
-     *
-     * @param exampleDimension The example dimension attribute value to use.
-     */
-    public void setExampleDimension(float exampleDimension) {
-        mExampleDimension = exampleDimension;
-        invalidateTextPaintAndMeasurements();
-    }
 
     /**
      * Gets the example drawable attribute value.
