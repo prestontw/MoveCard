@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -20,6 +21,10 @@ import android.widget.Toast;
 public class CardView extends View {
     private Drawable mExampleDrawable;
     private Card card;
+
+    private float left;
+    private float top;
+    private boolean touched = false;
 
     private TextPaint mTextPaint;
     private float mTextWidth;
@@ -62,6 +67,12 @@ public class CardView extends View {
         else {
             card = new Card("heart", 2);
         }
+        if (a.hasValue(R.styleable.CardView_leftDimension)) {
+            left = a.getDimension(R.styleable.CardView_leftDimension, 0.0f);
+        }
+        if (a.hasValue(R.styleable.CardView_topDimension)) {
+            top = a.getDimension(R.styleable.CardView_topDimension, 0.0f);
+        }
 
         a.recycle();
 
@@ -86,6 +97,10 @@ public class CardView extends View {
 
         // TODO: consider storing these as member variables to reduce
         // allocations per draw cycle.
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+
+        float density = dm.density;
+        Toast.makeText(getContext(), "density: " + density, Toast.LENGTH_SHORT).show();
         int paddingLeft = getPaddingLeft();
         int paddingTop = getPaddingTop();
         int paddingRight = getPaddingRight();
@@ -94,21 +109,36 @@ public class CardView extends View {
         int contentWidth = getWidth() - paddingLeft - paddingRight;
         int contentHeight = getHeight() - paddingTop - paddingBottom;
 
+        int leftPos = (int) (paddingLeft );
+        Toast.makeText(getContext(), "x= " + leftPos, Toast.LENGTH_SHORT).show();
+        int topPos = (int) (paddingTop);
+        if (touched) {
+            leftPos = (int) left;
+            topPos = (int) top;
+        }
         // we use something like Drawable ... = ...;
         // Draw the text.
         //canvas.drawPicture();
 
         // Draw the example drawable on top of the text.
         if ((mExampleDrawable = getImage(card))!= null) {
-            mExampleDrawable.setBounds(paddingLeft, paddingTop,
-                    paddingLeft + contentWidth, paddingTop + contentHeight);
+
+            mExampleDrawable.setBounds(leftPos, topPos,
+                    leftPos + contentWidth, topPos + contentHeight);
             mExampleDrawable.draw(canvas);
         }
     }
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
-        Toast.makeText(getContext(), "Thing was touched", Toast.LENGTH_SHORT).show();
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            Toast.makeText(getContext(), "touched at: " + event.getX() + ", " + event.getY(),
+                    Toast.LENGTH_SHORT).show();
+            left = event.getX();
+            top = event.getY();
+            touched = true;
+        }
+        invalidate();
         return super.onTouchEvent(event);
     }
 
