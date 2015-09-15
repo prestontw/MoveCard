@@ -2,23 +2,26 @@ package com.example.preston.movecard;
 
 /**
  * Created by preston on 7/5/15.
+ * Represents a default card using enum's
  */
 public class Card {
 
-    private int value;
-    private String suit;
+    enum values  {two, three, four, five, six, seven, eight, nine, ten, jack, queen, king, ace}
+    enum suits   {club, diamond, heart, spade}
+    private values value;
+    private suits suit;
 
-    public Card(String suit, int value) {
+    public Card(suits suit, values value) {
 
         this.suit = suit;
         this.value = value;
     }
 
-    public String getSuit() {
+    public suits getSuit() {
         return suit;
     }
 
-    public int getValue() {
+    public values getValue() {
         return value;
     }
 
