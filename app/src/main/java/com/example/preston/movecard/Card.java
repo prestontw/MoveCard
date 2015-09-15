@@ -8,20 +8,20 @@ public class Card {
 
     enum values  {two, three, four, five, six, seven, eight, nine, ten, jack, queen, king, ace}
     enum suits   {club, diamond, heart, spade}
-    private values value;
-    private suits suit;
+    private int value;
+    private String suit;
 
-    public Card(suits suit, values value) {
+    public Card(String suit, int value) {
 
         this.suit = suit;
         this.value = value;
     }
 
-    public suits getSuit() {
+    public String getSuit() {
         return suit;
     }
 
-    public values getValue() {
+    public int getValue() {
         return value;
     }
 
