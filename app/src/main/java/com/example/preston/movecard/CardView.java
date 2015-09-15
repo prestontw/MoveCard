@@ -54,6 +54,14 @@ public class CardView extends View {
                     R.styleable.CardView_exampleDrawable);
             mExampleDrawable.setCallback(this);
         }
+        if (a.hasValue(R.styleable.CardView_cardSuit)
+                && a.hasValue(R.styleable.CardView_cardValue)) {
+            card = new Card(a.getString(R.styleable.CardView_cardSuit),
+                    a.getInt(R.styleable.CardView_cardValue, 2));
+        }
+        else {
+            card = new Card("heart", 2);
+        }
 
         a.recycle();
 
@@ -100,14 +108,14 @@ public class CardView extends View {
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
-        Toast.makeText(getContext(), "Thing was touched", Toast.LENGTH_SHORT);
+        Toast.makeText(getContext(), "Thing was touched", Toast.LENGTH_SHORT).show();
         return super.onTouchEvent(event);
     }
 
     //turns a card into the appropriate image
     private Drawable getImage(Card card) {
-        Card.suits suit = card.getSuit();
-        Card.values value = card.getValue();
+        String suit = card.getSuit();
+        int value = card.getValue();
         String fileName = suit + "_" + getValueFromInt(value);
 
         //get id of image to draw
@@ -116,7 +124,8 @@ public class CardView extends View {
     }
 
     //necessary for parsing card file name from value
-    private String getValueFromInt(Card.values value) {
+    //TODO: add support for face cards
+    private String getValueFromInt(int value) {
         boolean debug = true;
         if (debug)
             System.out.println("get value from int will return: " + value);

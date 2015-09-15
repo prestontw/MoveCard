@@ -1,0 +1,7 @@
+<resources>
+    <declare-styleable name="CardView">
+        <attr name="exampleDrawable" format="color|reference" />
+        <attr name="cardSuit" format="string" />
+        <attr name="cardValue" format="integer" />
+    </declare-styleable>
+</resources>
