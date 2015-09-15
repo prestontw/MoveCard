@@ -10,11 +10,13 @@ public class Card {
     enum suits   {club, diamond, heart, spade}
     private int value;
     private String suit;
+    private boolean faceDown;
 
     public Card(String suit, int value) {
 
         this.suit = suit;
         this.value = value;
+        faceDown = false;
     }
 
     public String getSuit() {
@@ -32,5 +34,13 @@ public class Card {
 
     public String toString(){
         return suit + "_" + value;
+    }
+
+    public void flipOver() {
+        faceDown = !faceDown;
+    }
+
+    public boolean getFaceDown() {
+        return faceDown;
     }
 }

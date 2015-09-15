@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,9 @@ public class CardView extends View {
     private float width;
     private float height;
     private boolean touched = false;
+    private boolean pressed = false;
+    private boolean dragging = false;
+
 
     private TextPaint mTextPaint;
     private float mTextWidth;
@@ -79,8 +83,8 @@ public class CardView extends View {
         if (a.hasValue(R.styleable.CardView_topDimension)) {
             top = a.getDimension(R.styleable.CardView_topDimension, 0.0f);
         }
-            width = a.getDimension(R.styleable.CardView_width, 132 * getResources().getDisplayMetrics().density);
-            height = a.getDimension(R.styleable.CardView_cardheight, 100 * getResources().getDisplayMetrics().density);
+        width = a.getDimension(R.styleable.CardView_width, 132 * getResources().getDisplayMetrics().density);
+        height = a.getDimension(R.styleable.CardView_cardheight, 100 * getResources().getDisplayMetrics().density);
 
         a.recycle();
 
@@ -136,19 +140,49 @@ public class CardView extends View {
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            Toast.makeText(getContext(), "touched at: " + event.getX() + ", " + event.getY(),
-                    Toast.LENGTH_SHORT).show();
-            left = event.getX();
-            top = event.getY();
-            touched = true;
+        if (dragging || (event.getX() < left + width &&
+                    event.getX() > left &&
+                    event.getY() < top + height &&
+                    event.getY() > top)) {
+
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN: {
+                    pressed = true;
+
+                    return true;
+                }
+                case MotionEvent.ACTION_MOVE: {
+                    dragging = true;
+                    pressed = false;
+                    left = event.getX();
+                    top = event.getY();
+                    touched = true;
+                    invalidate();
+                    break;
+
+                }
+                case MotionEvent.ACTION_UP: {
+                    dragging = false;
+                    if (pressed) {
+                        pressed = false;
+                        // flip over card
+                        card.flipOver();
+                        invalidate();
+                    }
+                    return true;
+                }
+            }
         }
-        invalidate();
+
         return super.onTouchEvent(event);
     }
 
     //turns a card into the appropriate image
     private Drawable getImage(Card card) {
+        if (card.getFaceDown())
+            return getResources().getDrawable(getResources().getIdentifier(
+                                "b1fv", "drawable", getContext().getPackageName()
+                        ));
         String suit = card.getSuit();
         int value = card.getValue();
         String fileName = suit + "_" + getValueFromInt(value);
