@@ -14,10 +14,9 @@
         custom:exampleDrawable="@drawable/club_10"
         custom:cardSuit="spade"
         custom:cardValue="8"
-        custom:leftDimension="00dp"
+        custom:leftDimension="100dp"
         custom:width="66dp"
-        custom:cardheight="100dp"
-        custom:topDimension="0dp"
+        custom:topDimension="50dp"
         />
 
 

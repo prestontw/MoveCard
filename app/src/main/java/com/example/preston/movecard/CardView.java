@@ -79,12 +79,8 @@ public class CardView extends View {
         if (a.hasValue(R.styleable.CardView_topDimension)) {
             top = a.getDimension(R.styleable.CardView_topDimension, 0.0f);
         }
-        if (a.hasValue(R.styleable.CardView_width)) {
-            width = a.getDimension(R.styleable.CardView_width, 132);
-        }
-        if (a.hasValue(R.styleable.CardView_cardheight)) {
-            height = a.getDimension(R.styleable.CardView_cardheight, 200);
-        }
+            width = a.getDimension(R.styleable.CardView_width, 132 * getResources().getDisplayMetrics().density);
+            height = a.getDimension(R.styleable.CardView_cardheight, 100 * getResources().getDisplayMetrics().density);
 
         a.recycle();
 
